@@ -579,219 +579,219 @@ public class ClassTransformer implements IClassTransformer {
 		}*/
 
 
-		//was causing problems on startup, no idea what it does anymore,
-		//I need to apply better documentation practices
-		if(changedName.equals(getName(CLASS_KEY_RENDER_GLOBAL)) && net.minecraftforge.common.ForgeVersion.getVersion().compareTo("14.23.2.2642") < 0) {
-			ClassNode cn = startInjection(bytes);
-			MethodNode setupTerrain = getMethod(cn, getName(METHOD_KEY_SETUPTERRAIN), "(L"+ getName(CLASS_KEY_ENTITY) + ";DL" + getName(CLASS_KEY_ICAMERA) + ";IZ)V");
-			if(setupTerrain != null) {
-				final InsnList nodeAdd = new InsnList();
+//		//was causing problems on startup, no idea what it does anymore,
+//		//I need to apply better documentation practices
+//		if(changedName.equals(getName(CLASS_KEY_RENDER_GLOBAL)) && net.minecraftforge.common.ForgeVersion.getVersion().compareTo("14.23.2.2642") < 0) {
+//			ClassNode cn = startInjection(bytes);
+//			MethodNode setupTerrain = getMethod(cn, getName(METHOD_KEY_SETUPTERRAIN), "(L"+ getName(CLASS_KEY_ENTITY) + ";DL" + getName(CLASS_KEY_ICAMERA) + ";IZ)V");
+//			if(setupTerrain != null) {
+//				final InsnList nodeAdd = new InsnList();
+//
+//				AbstractInsnNode pos1 = null;
+//				AbstractInsnNode pos3;
+//				AbstractInsnNode pos2 = null;
+//
+//				int ifnull = 3;
+//				int aload = 3;
+//				int indexPos1 = 0;
+//
+//				for(int i = setupTerrain.instructions.size() - 1; i >= 0; i--) {
+//					AbstractInsnNode ain = setupTerrain.instructions.get(i);
+//					if(ain.getOpcode() == Opcodes.IFNULL && --ifnull == 0) {
+//						pos1 = ain.getNext();
+//						indexPos1 = i+1;
+//						break;
+//					}
+//				}
+//
+//				for(int i = indexPos1; i < setupTerrain.instructions.size(); i++) {
+//					AbstractInsnNode ain = setupTerrain.instructions.get(i);
+//					if(ain.getOpcode() == Opcodes.ALOAD && --aload == 0) {
+//						pos2 = setupTerrain.instructions.get(i-1);
+//						break;
+//					}
+//				}
+//
+//				while(pos1 != pos2)
+//				{
+//					pos3 = pos1;
+//					pos1 = pos1.getNext();
+//					setupTerrain.instructions.remove(pos3);
+//				}
+//
+//				//Lack of robustness, this could go really wrong. To future me: told you so!
+//				//pos2 = setupTerrain.instructions.get(914);
+//
+//				//nodeAdd.add(new VarInsnNode(Opcodes.ILOAD, 25));
+//				//nodeAdd.add(new JumpInsnNode(Opcodes.GOTO, pos2));
+//				//nodeAdd.add(new VarInsnNode(Opcodes.ILOAD, 27));
+//				//nodeAdd.add(new JumpInsnNode(Opcodes.IFEQ, pos2));
+//
+//				//setupTerrain.instructions.insert(pos1, nodeAdd);
+//
+//			}
+//			else
+//				AdvancedRocketry.logger.fatal("ASM injection into RenderGlobal.setupTerrain FAILED!");
+//
+//			return finishInjection(cn);
+//		}
 
-				AbstractInsnNode pos1 = null;
-				AbstractInsnNode pos3;
-				AbstractInsnNode pos2 = null;
-
-				int ifnull = 3;
-				int aload = 3;
-				int indexPos1 = 0;
-
-				for(int i = setupTerrain.instructions.size() - 1; i >= 0; i--) {
-					AbstractInsnNode ain = setupTerrain.instructions.get(i);
-					if(ain.getOpcode() == Opcodes.IFNULL && --ifnull == 0) {
-						pos1 = ain.getNext();
-						indexPos1 = i+1;
-						break;
-					}
-				}
-
-				for(int i = indexPos1; i < setupTerrain.instructions.size(); i++) {
-					AbstractInsnNode ain = setupTerrain.instructions.get(i);
-					if(ain.getOpcode() == Opcodes.ALOAD && --aload == 0) {
-						pos2 = setupTerrain.instructions.get(i-1);
-						break;
-					}
-				}
-
-				while(pos1 != pos2)
-				{
-					pos3 = pos1;
-					pos1 = pos1.getNext();
-					setupTerrain.instructions.remove(pos3);
-				}
-
-				//Lack of robustness, this could go really wrong. To future me: told you so!
-				//pos2 = setupTerrain.instructions.get(914);
-
-				//nodeAdd.add(new VarInsnNode(Opcodes.ILOAD, 25));
-				//nodeAdd.add(new JumpInsnNode(Opcodes.GOTO, pos2));
-				//nodeAdd.add(new VarInsnNode(Opcodes.ILOAD, 27));
-				//nodeAdd.add(new JumpInsnNode(Opcodes.IFEQ, pos2));
-
-				//setupTerrain.instructions.insert(pos1, nodeAdd);
-
-			}
-			else
-				AdvancedRocketry.logger.fatal("ASM injection into RenderGlobal.setupTerrain FAILED!");
-
-			return finishInjection(cn);
-		}
+//		//Inserts a hook to register inventories with rockets so they can be accessed from the UI
+//		//By default in most cases inventories check for distance and rockets have their own coordinate system.
+//		if(changedName.equals(getName(CLASS_KEY_ENTITY_PLAYER_MP))) {
+//			ClassNode cn = startInjection(bytes);
+//			MethodNode onUpdate = getMethod(cn, getName(METHOD_KEY_ONUPDATE), "()V");
+//
+//			if(onUpdate != null) {
+//				final InsnList nodeAdd = new InsnList();
+//				LabelNode label = new LabelNode();
+//				AbstractInsnNode pos;
+//				AbstractInsnNode ain = null;
+//				int numSpec = 1;
+//				int numAload = 7;
+//
+//				for(int i = 0; i < onUpdate.instructions.size(); i++) {
+//					ain = onUpdate.instructions.get(i);
+//					if(ain.getOpcode() == Opcodes.INVOKEVIRTUAL && numSpec-- == 0) {
+//
+//						while( i < onUpdate.instructions.size() ) {
+//							pos = onUpdate.instructions.get(i++);
+//							if( pos.getOpcode()  == Opcodes.ALOAD && numAload-- == 0 ) {
+//								label = (LabelNode)pos.getPrevious().getPrevious().getPrevious();
+//								break;
+//							}
+//						}
+//						break;
+//					}
+//				}
+//
+//
+//				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 0));
+//				nodeAdd.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "zmaster587/advancedRocketry/util/RocketInventoryHelper", "allowAccess", "(Ljava/lang/Object;)Z", false));
+//				nodeAdd.add(new JumpInsnNode(Opcodes.IFEQ, label));
+//
+//				onUpdate.instructions.insert(ain, nodeAdd);
+//
+//				//onUpdate.instructions.insertBefore(pos, label);
+//
+//			}
+//			else
+//				AdvancedRocketry.logger.fatal("ASM injection into EntityPlayerMP.onupdate FAILED!");
+//			return finishInjection(cn);
+//		}
 
 		//Inserts a hook to register inventories with rockets so they can be accessed from the UI
 		//By default in most cases inventories check for distance and rockets have their own coordinate system.
-		if(changedName.equals(getName(CLASS_KEY_ENTITY_PLAYER_MP))) {
-			ClassNode cn = startInjection(bytes);
-			MethodNode onUpdate = getMethod(cn, getName(METHOD_KEY_ONUPDATE), "()V");
-
-			if(onUpdate != null) {
-				final InsnList nodeAdd = new InsnList();
-				LabelNode label = new LabelNode();
-				AbstractInsnNode pos;
-				AbstractInsnNode ain = null;
-				int numSpec = 1;
-				int numAload = 7;
-
-				for(int i = 0; i < onUpdate.instructions.size(); i++) {
-					ain = onUpdate.instructions.get(i);
-					if(ain.getOpcode() == Opcodes.INVOKEVIRTUAL && numSpec-- == 0) {
-
-						while( i < onUpdate.instructions.size() ) {
-							pos = onUpdate.instructions.get(i++);
-							if( pos.getOpcode()  == Opcodes.ALOAD && numAload-- == 0 ) {
-								label = (LabelNode)pos.getPrevious().getPrevious().getPrevious();
-								break;
-							}
-						}
-						break;
-					}
-				}
-
-
-				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				nodeAdd.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "zmaster587/advancedRocketry/util/RocketInventoryHelper", "allowAccess", "(Ljava/lang/Object;)Z", false));
-				nodeAdd.add(new JumpInsnNode(Opcodes.IFEQ, label));
-
-				onUpdate.instructions.insert(ain, nodeAdd);
-
-				//onUpdate.instructions.insertBefore(pos, label);
-
-			}
-			else
-				AdvancedRocketry.logger.fatal("ASM injection into EntityPlayerMP.onupdate FAILED!");
-			return finishInjection(cn);
-		}
-
-		//Inserts a hook to register inventories with rockets so they can be accessed from the UI
-		//By default in most cases inventories check for distance and rockets have their own coordinate system.
-		if(changedName.equals(getName(CLASS_KEY_ENTITY_PLAYER))) {
-			ClassNode cn = startInjection(bytes);
-			MethodNode onUpdate = getMethod(cn, getName(METHOD_KEY_ONUPDATE), "()V");
-			if(onUpdate != null) {
-				final InsnList nodeAdd = new InsnList();
-				LabelNode label = new LabelNode();
-				AbstractInsnNode pos;
-				AbstractInsnNode ain = null;
-				int numSpec = 1;
-				int numAload = 7;
-
-				for(int i = 0; i < onUpdate.instructions.size(); i++) {
-					ain = onUpdate.instructions.get(i);
-					if(ain.getOpcode() == Opcodes.INVOKESPECIAL && numSpec-- == 0) {
-
-						while( i < onUpdate.instructions.size() ) {
-							pos = onUpdate.instructions.get(i++);
-							if( pos.getOpcode()  == Opcodes.ALOAD && numAload-- == 0 ) {
-								label = (LabelNode)pos.getPrevious().getPrevious().getPrevious();
-								break;
-							}
-
-						}
-						break;
-					}
-				}
-
-
-				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				//nodeAdd.add(new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Object"));
-				nodeAdd.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "zmaster587/advancedRocketry/util/RocketInventoryHelper", "allowAccess", "(Ljava/lang/Object;)Z", false));
-				nodeAdd.add(new JumpInsnNode(Opcodes.IFEQ, label));
-
-				onUpdate.instructions.insert(ain, nodeAdd);
-
-				//onUpdate.instructions.insertBefore(pos, label);
-
-			}
-			else
-				AdvancedRocketry.logger.fatal("ASM injection into EntityPlayer.onupdate FAILED!");
-
-
-			return finishInjection(cn);
-		}
+//		if(changedName.equals(getName(CLASS_KEY_ENTITY_PLAYER))) {
+//			ClassNode cn = startInjection(bytes);
+//			MethodNode onUpdate = getMethod(cn, getName(METHOD_KEY_ONUPDATE), "()V");
+//			if(onUpdate != null) {
+//				final InsnList nodeAdd = new InsnList();
+//				LabelNode label = new LabelNode();
+//				AbstractInsnNode pos;
+//				AbstractInsnNode ain = null;
+//				int numSpec = 1;
+//				int numAload = 7;
+//
+//				for(int i = 0; i < onUpdate.instructions.size(); i++) {
+//					ain = onUpdate.instructions.get(i);
+//					if(ain.getOpcode() == Opcodes.INVOKESPECIAL && numSpec-- == 0) {
+//
+//						while( i < onUpdate.instructions.size() ) {
+//							pos = onUpdate.instructions.get(i++);
+//							if( pos.getOpcode()  == Opcodes.ALOAD && numAload-- == 0 ) {
+//								label = (LabelNode)pos.getPrevious().getPrevious().getPrevious();
+//								break;
+//							}
+//
+//						}
+//						break;
+//					}
+//				}
+//
+//
+//				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 0));
+//				//nodeAdd.add(new TypeInsnNode(Opcodes.CHECKCAST, "java/lang/Object"));
+//				nodeAdd.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "zmaster587/advancedRocketry/util/RocketInventoryHelper", "allowAccess", "(Ljava/lang/Object;)Z", false));
+//				nodeAdd.add(new JumpInsnNode(Opcodes.IFEQ, label));
+//
+//				onUpdate.instructions.insert(ain, nodeAdd);
+//
+//				//onUpdate.instructions.insertBefore(pos, label);
+//
+//			}
+//			else
+//				AdvancedRocketry.logger.fatal("ASM injection into EntityPlayer.onupdate FAILED!");
+//
+//
+//			return finishInjection(cn);
+//		}
 
 		//Allows things OTHER than living things to be affected by gravity
 		//Why isn't this handled by the onEntityUpdate call by default?
 		//Regardless, NONE of minecart || TNT || sand actually every _call_ their super, so we need to ASM all three
-		if(changedName.equals(getName(CLASS_KEY_ENTITY)) || changedName.equals(getName(CLASS_KEY_ENTITY_FALLING_BLOCK)) || changedName.equals(getName(CLASS_KEY_ENTITY_MINECART)) || changedName.equals(getName(CLASS_KEY_ENTITY_TNT))) {
-			ClassNode cn = startInjection(bytes);
+//		if(changedName.equals(getName(CLASS_KEY_ENTITY)) || changedName.equals(getName(CLASS_KEY_ENTITY_FALLING_BLOCK)) || changedName.equals(getName(CLASS_KEY_ENTITY_MINECART)) || changedName.equals(getName(CLASS_KEY_ENTITY_TNT))) {
+//			ClassNode cn = startInjection(bytes);
+//
+//			MethodNode onUpdate = getMethod(cn, getName(METHOD_KEY_ONUPDATE), "()V");
+//
+//			if(onUpdate != null) {
+//				final InsnList nodeAdd = new InsnList();
+//				AbstractInsnNode pos;
+//				int lastReturnIndex = 0;
+//				AbstractInsnNode ain;
+//
+//				for(int i = 0; i <  onUpdate.instructions.size() ; i++) {
+//					ain = onUpdate.instructions.get(i);
+//					if(ain.getOpcode() == Opcodes.ALOAD) {
+//						lastReturnIndex = i;
+//
+//						break;
+//					}
+//				}
+//
+//				pos = onUpdate.instructions.get(lastReturnIndex);
+//
+//				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 0));
+//				nodeAdd.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "zmaster587/advancedRocketry/util/GravityHandler", "applyGravity", "(L" + getName(CLASS_KEY_ENTITY) + ";)V", false));
+//				onUpdate.instructions.insertBefore(pos, nodeAdd);
+//			}
+//
+//			return finishInjection(cn);
+//		}
 
-			MethodNode onUpdate = getMethod(cn, getName(METHOD_KEY_ONUPDATE), "()V");
-
-			if(onUpdate != null) {
-				final InsnList nodeAdd = new InsnList();
-				AbstractInsnNode pos;
-				int lastReturnIndex = 0;
-				AbstractInsnNode ain;
-
-				for(int i = 0; i <  onUpdate.instructions.size() ; i++) {
-					ain = onUpdate.instructions.get(i);
-					if(ain.getOpcode() == Opcodes.ALOAD) {
-						lastReturnIndex = i;
-
-						break;
-					}
-				}
-
-				pos = onUpdate.instructions.get(lastReturnIndex);
-
-				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				nodeAdd.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "zmaster587/advancedRocketry/util/GravityHandler", "applyGravity", "(L" + getName(CLASS_KEY_ENTITY) + ";)V", false));
-				onUpdate.instructions.insertBefore(pos, nodeAdd);
-			}
-
-			return finishInjection(cn);
-		}
-
-		//On block change insert a call to the atmosphere handler
-		if(changedName.equals(getName(CLASS_KEY_WORLD))) {
-			ClassNode cn = startInjection(bytes);
-			MethodNode setBlockStateMethod = getMethod(cn, getName(METHOD_KEY_SETBLOCKSTATE), "(L" + getName(CLASS_KEY_BLOCKPOS) + ";L" + getName(CLASS_KEY_IBLOCKSTATE) +";I)Z");
-			//MethodNode setBlockMetaMethod = getMethod(cn, getName(METHOD_KEY_SETBLOCKMETADATAWITHNOTIFY), "(IIIII)Z");
-
-			if(setBlockStateMethod != null) {
-
-				final InsnList nodeAdd = new InsnList();
-				AbstractInsnNode pos = null;
-				//int fmulNum = 2;
-
-				for (int i = setBlockStateMethod.instructions.size()-1; i >= 0 ; i--) {
-					AbstractInsnNode ain = setBlockStateMethod.instructions.get(i);
-					if (ain.getOpcode() == Opcodes.IRETURN) {
-						pos = ain;
-						break;
-					}
-				}
-
-
-				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 1));
-				nodeAdd.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "zmaster587/advancedRocketry/atmosphere/AtmosphereHandler", "onBlockChange", "(L" + getName(CLASS_KEY_WORLD) + ";L" + getName(CLASS_KEY_BLOCKPOS) + ";)V", false));
-
-				setBlockStateMethod.instructions.insertBefore(pos, nodeAdd);
-			}
-			else
-				AdvancedRocketry.logger.fatal("ASM injection into World.setBlock FAILED!");
-
-			return finishInjection(cn);
-		}
+//		//On block change insert a call to the atmosphere handler
+//		if(changedName.equals(getName(CLASS_KEY_WORLD))) {
+//			ClassNode cn = startInjection(bytes);
+//			MethodNode setBlockStateMethod = getMethod(cn, getName(METHOD_KEY_SETBLOCKSTATE), "(L" + getName(CLASS_KEY_BLOCKPOS) + ";L" + getName(CLASS_KEY_IBLOCKSTATE) +";I)Z");
+//			//MethodNode setBlockMetaMethod = getMethod(cn, getName(METHOD_KEY_SETBLOCKMETADATAWITHNOTIFY), "(IIIII)Z");
+//
+//			if(setBlockStateMethod != null) {
+//
+//				final InsnList nodeAdd = new InsnList();
+//				AbstractInsnNode pos = null;
+//				//int fmulNum = 2;
+//
+//				for (int i = setBlockStateMethod.instructions.size()-1; i >= 0 ; i--) {
+//					AbstractInsnNode ain = setBlockStateMethod.instructions.get(i);
+//					if (ain.getOpcode() == Opcodes.IRETURN) {
+//						pos = ain;
+//						break;
+//					}
+//				}
+//
+//
+//				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 0));
+//				nodeAdd.add(new VarInsnNode(Opcodes.ALOAD, 1));
+//				nodeAdd.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "zmaster587/advancedRocketry/atmosphere/AtmosphereHandler", "onBlockChange", "(L" + getName(CLASS_KEY_WORLD) + ";L" + getName(CLASS_KEY_BLOCKPOS) + ";)V", false));
+//
+//				setBlockStateMethod.instructions.insertBefore(pos, nodeAdd);
+//			}
+//			else
+//				AdvancedRocketry.logger.fatal("ASM injection into World.setBlock FAILED!");
+//
+//			return finishInjection(cn);
+//		}
 
 
 		return bytes;
