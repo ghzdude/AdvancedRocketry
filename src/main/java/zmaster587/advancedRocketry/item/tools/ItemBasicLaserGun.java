@@ -22,9 +22,9 @@ import zmaster587.advancedRocketry.AdvancedRocketry;
 import zmaster587.advancedRocketry.util.AudioRegistry;
 import zmaster587.libVulpes.LibVulpes;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
 import java.util.WeakHashMap;
 
@@ -43,7 +43,7 @@ public class ItemBasicLaserGun extends Item {
 	}
 
 	@Override
-	public float getStrVsBlock(@Nonnull ItemStack stack, IBlockState state) {
+	public float getDestroySpeed(ItemStack stack, IBlockState state) {
 		return 0;
 	}
 
@@ -108,7 +108,7 @@ public class ItemBasicLaserGun extends Item {
 	}
 
 	@Override
-	public void onUsingTick(@Nonnull ItemStack stack, EntityLivingBase player, int count) {
+	public void onUsingTick(@NotNull ItemStack stack, EntityLivingBase player, int count) {
 
 		World world = player.getEntityWorld();
 
@@ -155,7 +155,7 @@ public class ItemBasicLaserGun extends Item {
 	 * How long it takes to use or consume an item
 	 */
 	@Override
-	public int getMaxItemUseDuration(@Nonnull ItemStack stack)
+	public int getMaxItemUseDuration(@NotNull ItemStack stack)
 	{
 		return 16;
 	}
@@ -178,7 +178,7 @@ public class ItemBasicLaserGun extends Item {
 		float f7 = f2 * f4;
 		double d3 = reachDistance;
 
-		Vec3d vec3d1 = vec3d.addVector((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
+		Vec3d vec3d1 = vec3d.add((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
 		return worldIn.rayTraceBlocks(vec3d, vec3d1, useLiquids, !useLiquids, false);
 	}
 
@@ -186,15 +186,15 @@ public class ItemBasicLaserGun extends Item {
 	 * returns the action that specifies what animation to play when the items is being used
 	 */
 	@Override
-	@Nonnull
-	public EnumAction getItemUseAction(@Nonnull ItemStack stack)
+	@NotNull
+	public EnumAction getItemUseAction(@NotNull ItemStack stack)
 	{
 		return EnumAction.NONE;
 	}
 
 	@Override
-	@Nonnull
-	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World world, EntityLivingBase entityLiving)
+	@NotNull
+	public ItemStack onItemUseFinish(@NotNull ItemStack stack, World world, EntityLivingBase entityLiving)
 	{
 		RayTraceResult rayTrace = rayTrace(world, (EntityPlayer) entityLiving, false);
 
@@ -221,7 +221,7 @@ public class ItemBasicLaserGun extends Item {
 
 		Vec3d vec3d = new Vec3d(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
 		Vec3d vec3d1 = entity.getLook(0);
-		Vec3d vec3d2 = vec3d.addVector(vec3d1.x * reachDistance, vec3d1.y * reachDistance, vec3d1.z * reachDistance);
+		Vec3d vec3d2 = vec3d.add(vec3d1.x * reachDistance, vec3d1.y * reachDistance, vec3d1.z * reachDistance);
 
 
 		List<Entity> list = world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().grow(vec3d1.x * reachDistance, vec3d1.y * reachDistance, vec3d1.z * reachDistance).expand(1.0D, 1.0D, 1.0D), Predicates.and(EntitySelectors.NOT_SPECTATING, p_apply_1_ -> p_apply_1_ != null && p_apply_1_.canBeCollidedWith()));
@@ -242,8 +242,8 @@ public class ItemBasicLaserGun extends Item {
 
 
 	@Override
-	@ParametersAreNonnullByDefault
-	@Nonnull
+	
+	@NotNull
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand) {
 
 		player.setActiveHand(hand);

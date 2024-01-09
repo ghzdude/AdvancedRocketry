@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 public class WorldGenAlienTree extends WorldGenAbstractTree {
@@ -28,7 +28,7 @@ public class WorldGenAlienTree extends WorldGenAbstractTree {
 	}
 
 	@Override
-	public boolean generate(@Nonnull World world, Random random, BlockPos pos) {
+	public boolean generate(@NotNull World world, Random random, BlockPos pos) {
 		int treeHeight = random.nextInt(10) + 20;
 		boolean flag = true;
 
@@ -216,7 +216,7 @@ public class WorldGenAlienTree extends WorldGenAbstractTree {
 	private void generatePod(World world, Random random, int intitalDist, int x, int y, int z, int dirX, int dirZ) {
 		int branchLength = random.nextInt(5) + intitalDist;
 
-		EnumFacing direction = EnumFacing.getFront((dirX != 0 && dirZ != 0) ? Math.abs(dirX)*4 : Math.abs(dirX)*4 + Math.abs(dirZ)*8);
+		EnumFacing direction = EnumFacing.byIndex((dirX != 0 && dirZ != 0) ? Math.abs(dirX)*4 : Math.abs(dirX)*4 + Math.abs(dirZ)*8);
 
 		boolean flag = true;
 

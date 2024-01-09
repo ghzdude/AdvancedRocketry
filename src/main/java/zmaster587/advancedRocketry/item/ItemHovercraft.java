@@ -19,8 +19,8 @@ import net.minecraft.world.World;
 import zmaster587.advancedRocketry.entity.EntityHoverCraft;
 import zmaster587.libVulpes.LibVulpes;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class ItemHovercraft extends Item {
@@ -33,8 +33,8 @@ public class ItemHovercraft extends Item {
     /**
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
-    @ParametersAreNonnullByDefault
-    @Nonnull
+    
+    @NotNull
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
     {
         ItemStack itemstack = playerIn.getHeldItem(handIn);
@@ -52,7 +52,7 @@ public class ItemHovercraft extends Item {
         float f7 = f4 * f5;
         float f8 = f3 * f5;
         double d3 = 5.0D;
-        Vec3d vec3d1 = vec3d.addVector((double)f7 * 5.0D, (double)f6 * 5.0D, (double)f8 * 5.0D);
+        Vec3d vec3d1 = vec3d.add((double)f7 * 5.0D, (double)f6 * 5.0D, (double)f8 * 5.0D);
         RayTraceResult raytraceresult = worldIn.rayTraceBlocks(vec3d, vec3d1, true);
 
         if (raytraceresult == null)
@@ -114,7 +114,7 @@ public class ItemHovercraft extends Item {
     }
     
     @Override
-    public void addInformation(@Nonnull ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(@NotNull ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
     	tooltip.add(LibVulpes.proxy.getLocalizedString("item.hovercraft.tooltip"));
     }
 }

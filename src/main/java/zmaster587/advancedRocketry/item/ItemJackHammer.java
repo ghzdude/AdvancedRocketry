@@ -10,8 +10,8 @@ import net.minecraft.item.ItemTool;
 import net.minecraftforge.oredict.OreDictionary;
 import zmaster587.advancedRocketry.api.MaterialGeode;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Set;
 
 public class ItemJackHammer extends ItemTool {
@@ -20,21 +20,21 @@ public class ItemJackHammer extends ItemTool {
 	
 	public ItemJackHammer(ToolMaterial toolMaterial) {
 		super(toolMaterial, items);
-		
-		efficiencyOnProperMaterial = 50f;
+		this.efficiency = 50f;
 	}
 	
 	@Override
-	@ParametersAreNonnullByDefault
-	public boolean getIsRepairable(@Nonnull ItemStack stackMe, ItemStack stackItem) {
+
+	public boolean getIsRepairable(@NotNull ItemStack stackMe, ItemStack stackItem) {
 		return OreDictionary.itemMatches(OreDictionary.getOres("stickTitanium").get(0), stackItem, false);//super.getIsRepairable(p_82789_1_, p_82789_2_);
 	}
 
-	@ParametersAreNonnullByDefault
-    public float getStrVsBlock(@Nonnull ItemStack stack, IBlockState state)
-    {
-    	return  state.getMaterial() == Material.IRON || state.getMaterial() == Material.ROCK || state.getMaterial() == MaterialGeode.geode  ? this.efficiencyOnProperMaterial : super.getStrVsBlock(stack, state);
-    	   
+
+    public float getDestroySpeed(@NotNull ItemStack stack, IBlockState state) {
+		return state.getMaterial() == Material.IRON ||
+				state.getMaterial() == Material.ROCK ||
+				state.getMaterial() == MaterialGeode.geode  ?
+				this.efficiency : super.getDestroySpeed(stack, state);
     }
     
     public boolean canHarvestBlock(IBlockState blockIn)

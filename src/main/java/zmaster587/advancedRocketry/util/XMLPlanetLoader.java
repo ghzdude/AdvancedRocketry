@@ -24,7 +24,7 @@ import zmaster587.advancedRocketry.api.dimension.solar.StellarBody;
 import zmaster587.advancedRocketry.dimension.DimensionManager;
 import zmaster587.advancedRocketry.dimension.DimensionProperties;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -1080,7 +1080,7 @@ public class XMLPlanetLoader {
 
 	}
 
-	@Nonnull
+	@NotNull
 	public static ItemStack getStack(String text) {
 		String[] splitStr = text.split(" ");
 		int meta = 0;

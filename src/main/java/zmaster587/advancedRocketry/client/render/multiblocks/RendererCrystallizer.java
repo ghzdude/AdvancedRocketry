@@ -45,7 +45,7 @@ public class RendererCrystallizer extends TileEntitySpecialRenderer {
 		//Rotate and move the model into position
 		GL11.glTranslated(x+.5f, y, z + 0.5f);
 		EnumFacing front = RotatableBlock.getFront(tile.getWorld().getBlockState(tile.getPos())); //tile.getWorldObj().getBlockMetadata(tile.xCoord, tile.yCoord, tile.zCoord));
-		GL11.glRotatef((front.getFrontOffsetX() == 1 ? 180 : 0) + front.getFrontOffsetZ()*90f, 0, 1, 0);
+		GL11.glRotatef((front.getXOffset() == 1 ? 180 : 0) + front.getZOffset()*90f, 0, 1, 0);
 		GL11.glTranslated(-.5f, 0, -1.5f);
 
 		if(multiBlockTile.isRunning()) {
@@ -96,7 +96,7 @@ public class RendererCrystallizer extends TileEntitySpecialRenderer {
 				GL11.glEnable(GL11.GL_BLEND);
 				GL11.glBlendFunc( GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA );
 
-				int color = Minecraft.getMinecraft().getItemColors().getColorFromItemstack(stack, 0);
+				int color = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, 0);
 
 				float divisor = 1/255f;
 

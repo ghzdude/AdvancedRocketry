@@ -46,7 +46,7 @@ import zmaster587.libVulpes.client.ResourceIcon;
 import zmaster587.libVulpes.render.RenderHelper;
 import zmaster587.libVulpes.util.ZUtils;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.nio.IntBuffer;
 import java.util.List;
 import java.util.Random;
@@ -169,7 +169,7 @@ public class RocketEventHandler extends Gui {
 						int xPosition = (int)entity.posX - (getImgSize/2) + xOffset;
 						int zPosition = (int)entity.posZ - (getImgSize/2) + yOffset;
 						BlockPos thisPos = new BlockPos(xPosition, 0, zPosition);
-						Chunk chunk = worldObj.getChunkFromBlockCoords(thisPos);
+						Chunk chunk = worldObj.getChunk(thisPos);
 
 						if(chunk.isLoaded() && !chunk.isEmpty()) {
 							//Get Xcoord and ZCoords in the chunk
@@ -471,7 +471,7 @@ public class RocketEventHandler extends Gui {
 		}
 	}
 
-	private void renderModuleSlots(@Nonnull ItemStack armorStack, int slot, RenderGameOverlayEvent event) {
+	private void renderModuleSlots(@NotNull ItemStack armorStack, int slot, RenderGameOverlayEvent event) {
 		int index = 1;
 		float color = 0.85f + 0.15F*MathHelper.sin( 2f*(float)Math.PI*((Minecraft.getMinecraft().world.getTotalWorldTime()) % 60)/60f );
 		BufferBuilder buffer = Tessellator.getInstance().getBuffer();

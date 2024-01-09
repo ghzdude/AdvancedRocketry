@@ -19,10 +19,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import zmaster587.libVulpes.block.INamedMetaBlock;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockCrystal extends Block implements INamedMetaBlock {
-	
 	public final static PropertyEnum<EnumCrystal> CRYSTALPROPERTY = PropertyEnum.create("type", EnumCrystal.class);
 	
     public BlockCrystal()
@@ -34,12 +33,12 @@ public class BlockCrystal extends Block implements INamedMetaBlock {
     }
 	
     @Override
-    @Nonnull
+    @NotNull
     public IBlockState getStateFromMeta(int meta) {
     	return this.getDefaultState().withProperty(CRYSTALPROPERTY, EnumCrystal.values()[meta]);
     }
 
-    @Nonnull
+    @NotNull
     protected BlockStateContainer createBlockState()
     {
         return new BlockStateContainer(this, CRYSTALPROPERTY);
@@ -62,8 +61,8 @@ public class BlockCrystal extends Block implements INamedMetaBlock {
     
     
     @SideOnly(Side.CLIENT)
-    @Nonnull
-    public BlockRenderLayer getBlockLayer()
+    @NotNull
+    public BlockRenderLayer getRenderLayer()
     {
         return BlockRenderLayer.TRANSLUCENT;
     }
@@ -141,7 +140,7 @@ public class BlockCrystal extends Block implements INamedMetaBlock {
             return this.name;
         }
 
-        @Nonnull
+        @NotNull
         public String getName()
         {
             return this.name;

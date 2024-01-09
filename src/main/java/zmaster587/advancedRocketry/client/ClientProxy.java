@@ -62,8 +62,8 @@ import zmaster587.libVulpes.entity.fx.FxErrorBlock;
 import zmaster587.libVulpes.inventory.modules.ModuleContainerPan;
 import zmaster587.libVulpes.tile.TileSchematic;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public class ClientProxy extends CommonProxy {
@@ -129,7 +129,7 @@ public class ClientProxy extends CommonProxy {
 
 		Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new IItemColor()
         {
-            public int getColorFromItemstack(@Nonnull ItemStack stack, int tintIndex)
+            public int colorMultiplier(@NotNull ItemStack stack, int tintIndex)
             {
                 return tintIndex > 0 ? -1 : ((ItemArmor)stack.getItem()).getColor(stack);
             }
@@ -283,7 +283,7 @@ public class ClientProxy extends CommonProxy {
 		}
 
 		@Override
-		public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) {
+		public ModelResourceLocation getModelLocation(@NotNull ItemStack stack) {
 			return location;
 		}
 }
@@ -322,7 +322,7 @@ public class ClientProxy extends CommonProxy {
 
 	@Override
 	public Profiler getProfiler() {
-		return Minecraft.getMinecraft().mcProfiler;
+		return Minecraft.getMinecraft().profiler;
 	}
 
 	@Override

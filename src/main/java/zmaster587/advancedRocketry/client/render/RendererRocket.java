@@ -29,8 +29,8 @@ import zmaster587.advancedRocketry.api.IInfrastructure;
 import zmaster587.advancedRocketry.entity.EntityRocket;
 import zmaster587.advancedRocketry.util.StorageChunk;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class RendererRocket extends Render implements IRenderFactory<EntityRocket> {
 
@@ -40,7 +40,7 @@ public class RendererRocket extends Render implements IRenderFactory<EntityRocke
 	Class tileEntityBlockChiseled;
 	Method getState;
 
-	public RendererRocket(@Nonnull RenderManager manager) {
+	public RendererRocket(@NotNull RenderManager manager) {
 		super(manager);
 
 		try {
@@ -56,7 +56,7 @@ public class RendererRocket extends Render implements IRenderFactory<EntityRocke
 
 	//TODO: possibly optimize with GL lists
 	@Override
-	public void doRender(@Nonnull Entity entity, double x, double y, double z, float f1, float f2) {
+	public void doRender(@NotNull Entity entity, double x, double y, double z, float f1, float f2) {
 
 		StorageChunk storage  = ((EntityRocket)entity).storage;
 
@@ -132,7 +132,7 @@ public class RendererRocket extends Render implements IRenderFactory<EntityRocke
 
 						//I'm not dealing with untextured blocks from chisel and bits today
 						//Just assume everything from C&B is a bit
-						if(block.getBlock().getRegistryName().getResourceDomain().equals("chiselsandbits"))
+						if(block.getBlock().getRegistryName().getNamespace().equals("chiselsandbits"))
 							continue;
 
 						buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -140,7 +140,7 @@ public class RendererRocket extends Render implements IRenderFactory<EntityRocke
 							Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(block, new BlockPos(xx, yy, zz), storage.world, buffer);
 						} 
 						catch (NullPointerException e) {
-							System.out.println(block.getBlock().getUnlocalizedName() + " cannot be rendered on rocket at " + entity.getPosition());
+							System.out.println(block.getBlock().getTranslationKey() + " cannot be rendered on rocket at " + entity.getPosition());
 						}
 						Tessellator.getInstance().draw();
 					}

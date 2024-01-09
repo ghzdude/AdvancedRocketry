@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Random;
 
 /**
@@ -80,7 +80,7 @@ public class BlockRocketFire extends Block {
 						int k1 = this.getNeighborEncouragement(worldIn, blockpos);
 
 						if (k1 > 0) {
-							int l1 = (k1 + 40 + worldIn.getDifficulty().getDifficultyId() * 7) / (i + 30);
+							int l1 = (k1 + 40 + worldIn.getDifficulty().ordinal() * 7) / (i + 30);
 
 							if (l1 > 0 && rand.nextInt(j1) <= l1 && (!worldIn.isRaining() || !canFireDie(worldIn, blockpos))) {
 								worldIn.setBlockState(blockpos, Blocks.FIRE.getDefaultState().withProperty(BlockFire.AGE, 2), 3);
@@ -128,7 +128,8 @@ public class BlockRocketFire extends Block {
 			}
 
 			if (iblockstate.getBlock() == Blocks.TNT) {
-				Blocks.TNT.onBlockDestroyedByPlayer(worldIn, pos, iblockstate.withProperty(BlockTNT.EXPLODE, true));
+				//todo figure out this
+//				Blocks.TNT.onBlockHarvested(worldIn, pos, iblockstate.withProperty(BlockTNT.EXPLODE, true), null);
 			}
 		}
 	}
@@ -170,7 +171,7 @@ public class BlockRocketFire extends Block {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer()
+	public BlockRenderLayer getRenderLayer()
 	{
 		return BlockRenderLayer.CUTOUT;
 	}

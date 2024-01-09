@@ -16,7 +16,7 @@ import zmaster587.advancedRocketry.util.BiomeHandler;
 import zmaster587.libVulpes.api.IUniversalEnergy;
 import zmaster587.libVulpes.util.HashedBlockPosition;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class SatelliteBiomeChanger extends SatelliteBase  {
@@ -67,8 +67,8 @@ public class SatelliteBiomeChanger extends SatelliteBase  {
 	}
 
 	@Override
-	@Nonnull
-	public ItemStack getControllerItemStack(@Nonnull ItemStack satIdChip,
+	@NotNull
+	public ItemStack getControllerItemStack(@NotNull ItemStack satIdChip,
 											SatelliteProperties properties) {
 
 		ItemBiomeChanger idChipItem = (ItemBiomeChanger)satIdChip.getItem();
@@ -77,7 +77,7 @@ public class SatelliteBiomeChanger extends SatelliteBase  {
 	}
 
 	@Override
-	public boolean isAcceptableControllerItemStack(@Nonnull ItemStack stack) {
+	public boolean isAcceptableControllerItemStack(@NotNull ItemStack stack) {
 		return !stack.isEmpty() && stack.getItem() instanceof ItemBiomeChanger;
 	}
 
@@ -138,8 +138,8 @@ public class SatelliteBiomeChanger extends SatelliteBase  {
 		//Causing execution order to vary from source
 		/*for(int xx = -radius + x; xx < radius + x; xx++) {
 			for(int zz = -radius + z; zz < radius + z; zz++) {
-				set.add(world.getChunkFromBlockCoords(xx, zz));
-				byte[] biomeArr = world.getChunkFromBlockCoords(xx, zz).getBiomeArray();
+				set.add(world.getChunk(xx, zz));
+				byte[] biomeArr = world.getChunk(xx, zz).getBiomeArray();
 				biomeArr[(xx % 16)+ (zz % 16)*16] = (byte)biomeId;
 			}
 		}*/

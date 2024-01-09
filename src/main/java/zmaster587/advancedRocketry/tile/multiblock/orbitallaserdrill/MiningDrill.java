@@ -109,7 +109,7 @@ class MiningDrill extends AbstractDrill {
 
 			int y = 64;
 
-			if (world.getChunkFromChunkCoords(x >> 4, z >> 4).isLoaded()) {
+			if (world.getChunk(x >> 4, z >> 4).isLoaded()) {
 				int current;
 				for (int i = 0; i < 9; i++) {
 					current = world.getTopSolidOrLiquidBlock(new BlockPos(x + (i % 3) - 1, 0xFF, z + (i / 3) - 1)).getY();

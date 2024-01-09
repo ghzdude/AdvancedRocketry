@@ -9,7 +9,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import zmaster587.advancedRocketry.api.AdvancedRocketryBlocks;
 import zmaster587.advancedRocketry.block.BlockCrystal;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.Random;
 
 public class WorldGenLargeCrystal extends WorldGenerator {
@@ -20,7 +20,7 @@ public class WorldGenLargeCrystal extends WorldGenerator {
 	}
 
 	@Override
-	public boolean generate(World world, Random rand, @Nonnull BlockPos pos) {
+	public boolean generate(World world, Random rand, @NotNull BlockPos pos) {
 
 		IBlockState state = world.getBiome(pos).fillerBlock;
 		Block fillerBlock = state.getBlock();
@@ -144,7 +144,7 @@ public class WorldGenLargeCrystal extends WorldGenerator {
 	
 	//Screw thy lighting checks!
 	public void setBlockState(World world, BlockPos pos, IBlockState state) {
-		Chunk chunk = world.getChunkFromBlockCoords(pos);
+		Chunk chunk = world.getChunk(pos);
 		chunk.setBlockState(pos, state);
 	}
 }
