@@ -60,10 +60,10 @@ public class TileElectricArcFurnace extends TileMultiblockMachine implements IMo
 	@Override
 	public List<BlockMeta> getAllowableWildCardBlocks() {
 		List<BlockMeta> list = super.getAllowableWildCardBlocks();
-		list.addAll(TileMultiBlock.getMapping('O'));
-		list.addAll(TileMultiBlock.getMapping('I'));
-		list.addAll(TileMultiBlock.getMapping('l'));
-		list.addAll(TileMultiBlock.getMapping('L'));
+//		list.addAll(TileMultiBlock.getMapping('O'));
+//		list.addAll(TileMultiBlock.getMapping('I'));
+//		list.addAll(TileMultiBlock.getMapping('l'));
+//		list.addAll(TileMultiBlock.getMapping('L'));
 		list.add(new BlockMeta(AdvancedRocketryBlocks.blockBlastBrick, -1));
 		return list;
 	}

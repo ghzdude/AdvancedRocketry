@@ -98,9 +98,9 @@ public class TileBlackHoleGenerator extends TileMultiPowerProducer implements IT
 		@Override
 		public List<BlockMeta> getAllowableWildCardBlocks() {
 			List<BlockMeta> blocks = super.getAllowableWildCardBlocks();
-			blocks.addAll(TileMultiBlock.getMapping('I'));
+//			blocks.addAll(TileMultiBlock.getMapping('I'));
 			blocks.add(new BlockMeta( LibVulpesBlocks.blockAdvStructureBlock));
-			blocks.addAll(TileMultiBlock.getMapping('p'));
+//			blocks.addAll(TileMultiBlock.getMapping('p'));
 
 			return blocks;
 		}

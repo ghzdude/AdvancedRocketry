@@ -1,0 +1,14 @@
+{
+  "package": "zmaster587.advancedRocketry.mixin",
+  "refmap": "mixins.advancedRocketry.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "entity.EntityMixin",
+    "entity.PlayerMixin",
+    "world.WorldMixin"
+  ],
+  "client": [],
+  "server": []
+}

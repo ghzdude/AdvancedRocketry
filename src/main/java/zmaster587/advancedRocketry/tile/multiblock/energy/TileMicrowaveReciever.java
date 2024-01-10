@@ -90,9 +90,9 @@ public class TileMicrowaveReciever extends TileMultiPowerProducer implements ITi
 	public List<BlockMeta> getAllowableWildCardBlocks() {
 		List<BlockMeta> blocks = super.getAllowableWildCardBlocks();
 
-		blocks.addAll(TileMultiBlock.getMapping('I'));
+//		blocks.addAll(TileMultiBlock.getMapping('I'));
 		blocks.add(iron_block);
-		blocks.addAll(TileMultiBlock.getMapping('p'));
+//		blocks.addAll(TileMultiBlock.getMapping('p'));
 
 		return blocks;
 	}
