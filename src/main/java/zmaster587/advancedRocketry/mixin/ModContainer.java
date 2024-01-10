@@ -1,4 +1,4 @@
-package zmaster587.advancedRocketry.asm;
+package zmaster587.advancedRocketry.mixin;
 
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.LoadController;

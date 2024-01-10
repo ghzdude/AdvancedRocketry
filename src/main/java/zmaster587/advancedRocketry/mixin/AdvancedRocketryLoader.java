@@ -1,14 +1,15 @@
 package zmaster587.advancedRocketry.mixin;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import org.jetbrains.annotations.Nullable;
 import zone.rong.mixinbooter.IEarlyMixinLoader;
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
+@TransformerExclusions(value = {"zmaster587.advancedRocketry.mixin.ClassTransformer"})
 @MCVersion("1.12.2")
 public class AdvancedRocketryLoader implements IFMLLoadingPlugin, IEarlyMixinLoader {
 
@@ -23,12 +24,12 @@ public class AdvancedRocketryLoader implements IFMLLoadingPlugin, IEarlyMixinLoa
 
     @Override
     public String[] getASMTransformerClass() {
-        return new String[0];
+        return new String[] {};
     }
 
     @Override
     public String getModContainerClass() {
-        return null;
+        return "zmaster587.advancedRocketry.mixin.ModContainer";
     }
 
     @Nullable

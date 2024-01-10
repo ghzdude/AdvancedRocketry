@@ -1,4 +1,4 @@
-package zmaster587.advancedRocketry.asm;
+package zmaster587.advancedRocketry.mixin;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -730,7 +730,10 @@ public class ClassTransformer implements IClassTransformer {
 		//Allows things OTHER than living things to be affected by gravity
 		//Why isn't this handled by the onEntityUpdate call by default?
 		//Regardless, NONE of minecart || TNT || sand actually every _call_ their super, so we need to ASM all three
-//		if(changedName.equals(getName(CLASS_KEY_ENTITY)) || changedName.equals(getName(CLASS_KEY_ENTITY_FALLING_BLOCK)) || changedName.equals(getName(CLASS_KEY_ENTITY_MINECART)) || changedName.equals(getName(CLASS_KEY_ENTITY_TNT))) {
+//		if(changedName.equals(getName(CLASS_KEY_ENTITY)) ||
+//				changedName.equals(getName(CLASS_KEY_ENTITY_FALLING_BLOCK)) ||
+//				changedName.equals(getName(CLASS_KEY_ENTITY_MINECART)) ||
+//				changedName.equals(getName(CLASS_KEY_ENTITY_TNT))) {
 //			ClassNode cn = startInjection(bytes);
 //
 //			MethodNode onUpdate = getMethod(cn, getName(METHOD_KEY_ONUPDATE), "()V");
