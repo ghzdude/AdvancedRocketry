@@ -16,6 +16,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
@@ -28,7 +29,6 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -44,10 +44,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import org.jetbrains.annotations.NotNull;
 import zmaster587.advancedRocketry.advancements.ARAdvancements;
 import zmaster587.advancedRocketry.api.*;
 import zmaster587.advancedRocketry.api.capability.CapabilitySpaceArmor;
@@ -73,7 +72,6 @@ import zmaster587.advancedRocketry.event.CableTickHandler;
 import zmaster587.advancedRocketry.event.PlanetEventHandler;
 import zmaster587.advancedRocketry.event.WorldEvents;
 import zmaster587.advancedRocketry.integration.CompatibilityMgr;
-import zmaster587.advancedRocketry.integration.GalacticCraftHandler;
 import zmaster587.advancedRocketry.item.*;
 import zmaster587.advancedRocketry.item.components.ItemJetpack;
 import zmaster587.advancedRocketry.item.components.ItemPressureTank;
@@ -83,14 +81,10 @@ import zmaster587.advancedRocketry.mission.MissionGasCollection;
 import zmaster587.advancedRocketry.mission.MissionOreMining;
 import zmaster587.advancedRocketry.network.*;
 import zmaster587.advancedRocketry.satellite.*;
-import zmaster587.advancedRocketry.stations.SpaceStationObject;
 import zmaster587.advancedRocketry.stations.SpaceObjectManager;
-import zmaster587.advancedRocketry.tile.multiblock.orbitallaserdrill.TileOrbitalLaserDrill;
-import zmaster587.advancedRocketry.tile.multiblock.energy.TileSolarArray;
-import zmaster587.advancedRocketry.tile.atmosphere.*;
-import zmaster587.advancedRocketry.tile.satellite.TileSatelliteTerminal;
-import zmaster587.advancedRocketry.tile.satellite.TileSatelliteBuilder;
+import zmaster587.advancedRocketry.stations.SpaceStationObject;
 import zmaster587.advancedRocketry.tile.*;
+import zmaster587.advancedRocketry.tile.atmosphere.*;
 import zmaster587.advancedRocketry.tile.cables.TileDataPipe;
 import zmaster587.advancedRocketry.tile.cables.TileEnergyPipe;
 import zmaster587.advancedRocketry.tile.cables.TileLiquidPipe;
@@ -101,7 +95,11 @@ import zmaster587.advancedRocketry.tile.infrastructure.*;
 import zmaster587.advancedRocketry.tile.multiblock.*;
 import zmaster587.advancedRocketry.tile.multiblock.energy.TileBlackHoleGenerator;
 import zmaster587.advancedRocketry.tile.multiblock.energy.TileMicrowaveReciever;
+import zmaster587.advancedRocketry.tile.multiblock.energy.TileSolarArray;
 import zmaster587.advancedRocketry.tile.multiblock.machine.*;
+import zmaster587.advancedRocketry.tile.multiblock.orbitallaserdrill.TileOrbitalLaserDrill;
+import zmaster587.advancedRocketry.tile.satellite.TileSatelliteBuilder;
+import zmaster587.advancedRocketry.tile.satellite.TileSatelliteTerminal;
 import zmaster587.advancedRocketry.tile.station.*;
 import zmaster587.advancedRocketry.util.*;
 import zmaster587.advancedRocketry.world.biome.*;
@@ -134,13 +132,15 @@ import zmaster587.libVulpes.util.HashedBlockPosition;
 import zmaster587.libVulpes.util.InputSyncHandler;
 import zmaster587.libVulpes.util.SingleEntry;
 
-import org.jetbrains.annotations.NotNull;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.Map.Entry;
 
 
-@Mod(modid="advancedrocketry")
+@Mod(modid = Tags.MODID, version = Tags.VERSION)
 public class AdvancedRocketry {
 
 	@SidedProxy(clientSide="zmaster587.advancedRocketry.client.ClientProxy", serverSide="zmaster587.advancedRocketry.common.CommonProxy")
@@ -352,72 +352,72 @@ public class AdvancedRocketry {
 		EntityRegistry.registerModEntity(new ResourceLocation(Constants.modId, "ARHoverCraft") , EntityHoverCraft.class, "hovercraft", 9, this, 64, 3, true);
 		
 		//TileEntity Registration ---------------------------------------------------------------------------------------------
-		GameRegistry.registerTileEntity(TileRocketAssemblingMachine.class, "ARrocketBuilder");
-		GameRegistry.registerTileEntity(TileWarpCore.class, "ARwarpCore");
+		registerTileEntity(TileRocketAssemblingMachine.class, "ARrocketBuilder");
+		registerTileEntity(TileWarpCore.class, "ARwarpCore");
 		//GameRegistry.registerTileEntity(TileModelRender.class, "ARmodelRenderer");
-		GameRegistry.registerTileEntity(TileFuelingStation.class, "ARfuelingStation");
-		GameRegistry.registerTileEntity(TileRocketMonitoringStation.class, "ARmonitoringStation");
+		registerTileEntity(TileFuelingStation.class, "ARfuelingStation");
+		registerTileEntity(TileRocketMonitoringStation.class, "ARmonitoringStation");
 		//GameRegistry.registerTileEntity(TileMissionController.class, "ARmissionControlComp");
-		GameRegistry.registerTileEntity(TileOrbitalLaserDrill.class, "ARspaceLaser");
-		GameRegistry.registerTileEntity(TilePrecisionAssembler.class, "ARprecisionAssembler");
-		GameRegistry.registerTileEntity(TileObservatory.class, "ARobservatory");
-		GameRegistry.registerTileEntity(TileCrystallizer.class, "ARcrystallizer");
-		GameRegistry.registerTileEntity(TileCuttingMachine.class, "ARcuttingmachine");
-		GameRegistry.registerTileEntity(TileDataBus.class, "ARdataBus");
-		GameRegistry.registerTileEntity(TileSatelliteHatch.class, "ARsatelliteHatch");
-		GameRegistry.registerTileEntity(TileGuidanceComputerAccessHatch.class, "ARguidanceComputerHatch");
-		GameRegistry.registerTileEntity(TileSatelliteBuilder.class, "ARsatelliteBuilder");
-		GameRegistry.registerTileEntity(TileSatelliteTerminal.class, "ARTileEntitySatelliteControlCenter");
-		GameRegistry.registerTileEntity(TileAstrobodyDataProcessor.class, "ARplanetAnalyser");
-		GameRegistry.registerTileEntity(TileGuidanceComputer.class, "ARguidanceComputer");
-		GameRegistry.registerTileEntity(TileElectricArcFurnace.class, "ARelectricArcFurnace");
-		GameRegistry.registerTileEntity(TilePlanetSelector.class, "ARTilePlanetSelector");
+		registerTileEntity(TileOrbitalLaserDrill.class, "ARspaceLaser");
+		registerTileEntity(TilePrecisionAssembler.class, "ARprecisionAssembler");
+		registerTileEntity(TileObservatory.class, "ARobservatory");
+		registerTileEntity(TileCrystallizer.class, "ARcrystallizer");
+		registerTileEntity(TileCuttingMachine.class, "ARcuttingmachine");
+		registerTileEntity(TileDataBus.class, "ARdataBus");
+		registerTileEntity(TileSatelliteHatch.class, "ARsatelliteHatch");
+		registerTileEntity(TileGuidanceComputerAccessHatch.class, "ARguidanceComputerHatch");
+		registerTileEntity(TileSatelliteBuilder.class, "ARsatelliteBuilder");
+		registerTileEntity(TileSatelliteTerminal.class, "ARTileEntitySatelliteControlCenter");
+		registerTileEntity(TileAstrobodyDataProcessor.class, "ARplanetAnalyser");
+		registerTileEntity(TileGuidanceComputer.class, "ARguidanceComputer");
+		registerTileEntity(TileElectricArcFurnace.class, "ARelectricArcFurnace");
+		registerTileEntity(TilePlanetSelector.class, "ARTilePlanetSelector");
 		//GameRegistry.registerTileEntity(TileModelRenderRotatable.class, "ARTileModelRenderRotatable");
-		GameRegistry.registerTileEntity(TileMaterial.class, "ARTileMaterial");
-		GameRegistry.registerTileEntity(TileLathe.class, "ARTileLathe");
-		GameRegistry.registerTileEntity(TileRollingMachine.class, "ARTileMetalBender");
-		GameRegistry.registerTileEntity(TileStationAssembler.class, "ARStationBuilder");
-		GameRegistry.registerTileEntity(TileElectrolyser.class, "ARElectrolyser");
-		GameRegistry.registerTileEntity(TileChemicalReactor.class, "ARChemicalReactor");
-		GameRegistry.registerTileEntity(TileOxygenVent.class, "AROxygenVent");
-		GameRegistry.registerTileEntity(TileGasChargePad.class, "AROxygenCharger");
-		GameRegistry.registerTileEntity(TileCO2Scrubber.class, "ARCO2Scrubber");
-		GameRegistry.registerTileEntity(TileWarpController.class, "ARStationMonitor");
-		GameRegistry.registerTileEntity(TileAtmosphereDetector.class, "AROxygenDetector");
-		GameRegistry.registerTileEntity(TileStationOrientationController.class, "AROrientationControl");
-		GameRegistry.registerTileEntity(TileStationGravityController.class, "ARGravityControl");
-		GameRegistry.registerTileEntity(TileLiquidPipe.class, "ARLiquidPipe");
-		GameRegistry.registerTileEntity(TileDataPipe.class, "ARDataPipe");
-		GameRegistry.registerTileEntity(TileEnergyPipe.class, "AREnergyPipe");
-		GameRegistry.registerTileEntity(TileMicrowaveReciever.class, "ARMicrowaveReciever");
-		GameRegistry.registerTileEntity(TileSuitWorkStation.class, "ARSuitWorkStation");
-		GameRegistry.registerTileEntity(TileRocketLoader.class, "ARRocketLoader");
-		GameRegistry.registerTileEntity(TileRocketUnloader.class, "ARRocketUnloader");
-		GameRegistry.registerTileEntity(TileBiomeScanner.class, "ARBiomeScanner");
-		GameRegistry.registerTileEntity(TileAtmosphereTerraformer.class, "ARAttTerraformer");
-		GameRegistry.registerTileEntity(TileLandingPad.class, "ARLandingPad");
-		GameRegistry.registerTileEntity(TileUnmannedVehicleAssembler.class, "ARStationDeployableRocketAssembler");
-		GameRegistry.registerTileEntity(TileFluidTank.class, "ARFluidTank");
-		GameRegistry.registerTileEntity(TileRocketFluidUnloader.class, "ARFluidUnloader");
-		GameRegistry.registerTileEntity(TileRocketFluidLoader.class, "ARFluidLoader");
-		GameRegistry.registerTileEntity(TileSolarPanel.class, "ARSolarGenerator");
-		GameRegistry.registerTileEntity(TileDockingPort.class, "ARDockingPort");
-		GameRegistry.registerTileEntity(TileStationAltitudeController.class, "ARStationAltitudeController");
-		GameRegistry.registerTileEntity(TileRailgun.class, "ARRailgun");
-		GameRegistry.registerTileEntity(TileHolographicPlanetSelector.class, "ARplanetHoloSelector");
-		GameRegistry.registerTileEntity(TileForceFieldProjector.class, "ARForceFieldProjector");
-		GameRegistry.registerTileEntity(TileSeal.class, "ARBlockSeal");
-		GameRegistry.registerTileEntity(TileSpaceElevator.class, "ARSpaceElevator");
-		GameRegistry.registerTileEntity(TileBeacon.class, "ARBeacon");
-		GameRegistry.registerTileEntity(TileWirelessTransciever.class, "ARTransciever");
-		GameRegistry.registerTileEntity(TileBlackHoleGenerator.class, "ARblackholegenerator");
-		GameRegistry.registerTileEntity(TilePump.class, new ResourceLocation(Constants.modId, "ARpump"));
-		GameRegistry.registerTileEntity(TileCentrifuge.class, new ResourceLocation(Constants.modId, "ARCentrifuge"));
-		GameRegistry.registerTileEntity(TilePrecisionLaserEtcher.class, new ResourceLocation(Constants.modId, "ARPrecisionLaserEtcher"));
-		GameRegistry.registerTileEntity(TileSolarArray.class, new ResourceLocation(Constants.modId, "ARSolarArray"));
+		registerTileEntity(TileMaterial.class, "ARTileMaterial");
+		registerTileEntity(TileLathe.class, "ARTileLathe");
+		registerTileEntity(TileRollingMachine.class, "ARTileMetalBender");
+		registerTileEntity(TileStationAssembler.class, "ARStationBuilder");
+		registerTileEntity(TileElectrolyser.class, "ARElectrolyser");
+		registerTileEntity(TileChemicalReactor.class, "ARChemicalReactor");
+		registerTileEntity(TileOxygenVent.class, "AROxygenVent");
+		registerTileEntity(TileGasChargePad.class, "AROxygenCharger");
+		registerTileEntity(TileCO2Scrubber.class, "ARCO2Scrubber");
+		registerTileEntity(TileWarpController.class, "ARStationMonitor");
+		registerTileEntity(TileAtmosphereDetector.class, "AROxygenDetector");
+		registerTileEntity(TileStationOrientationController.class, "AROrientationControl");
+		registerTileEntity(TileStationGravityController.class, "ARGravityControl");
+		registerTileEntity(TileLiquidPipe.class, "ARLiquidPipe");
+		registerTileEntity(TileDataPipe.class, "ARDataPipe");
+		registerTileEntity(TileEnergyPipe.class, "AREnergyPipe");
+		registerTileEntity(TileMicrowaveReciever.class, "ARMicrowaveReciever");
+		registerTileEntity(TileSuitWorkStation.class, "ARSuitWorkStation");
+		registerTileEntity(TileRocketLoader.class, "ARRocketLoader");
+		registerTileEntity(TileRocketUnloader.class, "ARRocketUnloader");
+		registerTileEntity(TileBiomeScanner.class, "ARBiomeScanner");
+		registerTileEntity(TileAtmosphereTerraformer.class, "ARAttTerraformer");
+		registerTileEntity(TileLandingPad.class, "ARLandingPad");
+		registerTileEntity(TileUnmannedVehicleAssembler.class, "ARStationDeployableRocketAssembler");
+		registerTileEntity(TileFluidTank.class, "ARFluidTank");
+		registerTileEntity(TileRocketFluidUnloader.class, "ARFluidUnloader");
+		registerTileEntity(TileRocketFluidLoader.class, "ARFluidLoader");
+		registerTileEntity(TileSolarPanel.class, "ARSolarGenerator");
+		registerTileEntity(TileDockingPort.class, "ARDockingPort");
+		registerTileEntity(TileStationAltitudeController.class, "ARStationAltitudeController");
+		registerTileEntity(TileRailgun.class, "ARRailgun");
+		registerTileEntity(TileHolographicPlanetSelector.class, "ARplanetHoloSelector");
+		registerTileEntity(TileForceFieldProjector.class, "ARForceFieldProjector");
+		registerTileEntity(TileSeal.class, "ARBlockSeal");
+		registerTileEntity(TileSpaceElevator.class, "ARSpaceElevator");
+		registerTileEntity(TileBeacon.class, "ARBeacon");
+		registerTileEntity(TileWirelessTransciever.class, "ARTransciever");
+		registerTileEntity(TileBlackHoleGenerator.class, "ARblackholegenerator");
+		registerTileEntity(TilePump.class,"ARpump");
+		registerTileEntity(TileCentrifuge.class,"ARCentrifuge");
+		registerTileEntity(TilePrecisionLaserEtcher.class,"ARPrecisionLaserEtcher");
+		registerTileEntity(TileSolarArray.class,"ARSolarArray");
 		
 		if(zmaster587.advancedRocketry.api.ARConfiguration.getCurrentConfig().enableGravityController)
-			GameRegistry.registerTileEntity(TileAreaGravityController.class, "ARGravityMachine");
+			registerTileEntity(TileAreaGravityController.class, "ARGravityMachine");
 
 
 		//Register machine recipes
@@ -459,6 +459,10 @@ public class AdvancedRocketry {
         machineRecipes.registerMachine(TileCrystallizer.class);
         machineRecipes.registerMachine(TileCentrifuge.class);
 		machineRecipes.registerMachine(TilePrecisionLaserEtcher.class);
+	}
+
+	private static void registerTileEntity(Class<? extends TileEntity> clazz, String name) {
+		GameRegistry.registerTileEntity(clazz, new ResourceLocation(Tags.MODID, name));
 	}
 	
 	@SubscribeEvent(priority=EventPriority.HIGH)
@@ -1081,12 +1085,12 @@ public class AdvancedRocketry {
 		AdvancedRocketryAPI.gravityManager = new GravityHandler();
 
 		// Compat stuff
-		if(Loader.isModLoaded("galacticraftcore") && zmaster587.advancedRocketry.api.ARConfiguration.getCurrentConfig().overrideGCAir) {
-			GalacticCraftHandler eventHandler = new GalacticCraftHandler();
-			MinecraftForge.EVENT_BUS.register(eventHandler);
-			if(event.getSide().isClient())
-				FMLCommonHandler.instance().bus().register(eventHandler);
-		}
+//		if(Loader.isModLoaded("galacticraftcore") && zmaster587.advancedRocketry.api.ARConfiguration.getCurrentConfig().overrideGCAir) {
+//			GalacticCraftHandler eventHandler = new GalacticCraftHandler();
+//			MinecraftForge.EVENT_BUS.register(eventHandler);
+//			if(event.getSide().isClient())
+//				FMLCommonHandler.instance().bus().register(eventHandler);
+//		}
 		CompatibilityMgr.isSpongeInstalled = Loader.isModLoaded("sponge");
 		// End compat stuff
 
