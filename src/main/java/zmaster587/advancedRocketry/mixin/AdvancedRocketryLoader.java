@@ -29,7 +29,7 @@ public class AdvancedRocketryLoader implements IFMLLoadingPlugin, IEarlyMixinLoa
 
     @Override
     public String getModContainerClass() {
-        return "zmaster587.advancedRocketry.mixin.ModContainer";
+        return null;
     }
 
     @Nullable
