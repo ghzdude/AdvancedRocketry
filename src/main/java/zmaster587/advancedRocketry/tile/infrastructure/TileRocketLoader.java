@@ -1,6 +1,8 @@
 package zmaster587.advancedRocketry.tile.infrastructure;
 
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -110,97 +112,90 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 		return false;
 	}
 
+	@SuppressWarnings("DataFlowIssue")
 	@Override
 	public void update() {
 		//Move a stack of items
-		if(!world.isRemote && rocket != null ) {
+		if(!world.isRemote && rocket != null) {
 
 			boolean isAllowedToOperate = (inputstate == RedstoneState.OFF || isStateActive(inputstate, getStrongPowerForSides(world, getPos())));
+			if (!isAllowedToOperate) {
+				setRedstoneState(false);
+				return;
+			}
 
 			List<TileEntity> tiles = rocket.storage.getInventoryTiles();
-			boolean foundStack = false;
-			boolean rocketContainsItems = false;
-			out:
-				//Function returns if something can be moved
+
+			IntList nonEmptySlots = new IntArrayList(inventory.getSlots());
+			for (int i = 0; i < inventory.getSlots(); i++) {
+				if (!inventory.getStackInSlot(i).isEmpty())
+					nonEmptySlots.add(i);
+			}
+			boolean hasMovedItems = false;
+			if (inventory.getSlots() - nonEmptySlots.size() != 0) {
 				for(TileEntity tile : tiles) {
-					if(tile.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP)) {
-						IItemHandler inv = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
-
-						for(int i = 0; i < inv.getSlots(); i++) {
-							if(inv.getStackInSlot(i).isEmpty())
-								rocketContainsItems = true;
-
-							//Loop though this inventory's slots and find a suitible one
-							for(int j = 0; j < getSizeInventory(); j++) {
-								if((inv.getStackInSlot(i).isEmpty()) && !inventory.getStackInSlot(j).isEmpty()) {
-									if(isAllowedToOperate) {
-										inv.insertItem(i, inventory.getStackInSlot(j), false);
-										inventory.setInventorySlotContents(j,ItemStack.EMPTY);
-									}
-									rocketContainsItems = true;
-									break out;
-								}
-								else if(!getStackInSlot(j).isEmpty() && inv.getStackInSlot(i).getItem() == getStackInSlot(j).getItem() &&
-										ItemStack.areItemStackTagsEqual(inv.getStackInSlot(i), getStackInSlot(j)) && inv.getStackInSlot(i).getMaxStackSize() != inv.getStackInSlot(i).getCount() ) {
-									if(isAllowedToOperate) {
-										ItemStack stack2 = inventory.decrStackSize(j, inv.getStackInSlot(i).getMaxStackSize() - inv.getStackInSlot(i).getCount());
-										inv.getStackInSlot(i).setCount(inv.getStackInSlot(i).getCount() + stack2.getCount());
-									}
-									rocketContainsItems = true;
-
-									if(inventory.getStackInSlot(j).isEmpty())
-										break out;
-
-									foundStack = true;
-								}
-							}
-							if(foundStack)
-								break out;
-						}
-					}
-					else {
-						if(tile instanceof IInventory && !(tile instanceof TileGuidanceComputer)) {
-							IInventory inv = ((IInventory)tile);
-
-							for(int i = 0; i < inv.getSizeInventory(); i++) {
-								if(inv.getStackInSlot(i).isEmpty())
-									rocketContainsItems = true;
-
-								//Loop though this inventory's slots and find a suitible one
-								for(int j = 0; j < getSizeInventory(); j++) {
-									if((inv.getStackInSlot(i).isEmpty()) && !inventory.getStackInSlot(j).isEmpty()) {
-										if(isAllowedToOperate) {
-											inv.setInventorySlotContents(i, inventory.getStackInSlot(j));
-											inventory.setInventorySlotContents(j,ItemStack.EMPTY);
-										}
-										rocketContainsItems = true;
-										break out;
-									}
-									else if(!getStackInSlot(j).isEmpty() && inv.isItemValidForSlot(i, getStackInSlot(j)) && inv.getStackInSlot(i).getItem() == getStackInSlot(j).getItem() &&
-											ItemStack.areItemStackTagsEqual(inv.getStackInSlot(i), getStackInSlot(j)) && inv.getStackInSlot(i).getMaxStackSize() != inv.getStackInSlot(i).getCount() ) {
-										if(isAllowedToOperate) {
-											ItemStack stack2 = inventory.decrStackSize(j, inv.getStackInSlot(i).getMaxStackSize() - inv.getStackInSlot(i).getCount());
-											inv.getStackInSlot(i).setCount(inv.getStackInSlot(i).getCount() + stack2.getCount());
-										}
-										rocketContainsItems = true;
-
-										if(inventory.getStackInSlot(j).isEmpty())
-											break out;
-
-										foundStack = true;
-									}
-								}
-								if(foundStack)
-									break out;
-							}
-						}
+					IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+					if (itemHandler != null) {
+						hasMovedItems = handleItemHandler(itemHandler, nonEmptySlots);
+					} else if (tile instanceof IInventory inv && !(tile instanceof TileGuidanceComputer)) {
+						hasMovedItems = handleInventory(inv, nonEmptySlots);
 					}
 				}
-
-			//Update redstone state
-			setRedstoneState(!rocketContainsItems);
-
+			}
+			setRedstoneState(hasMovedItems);
 		}
+	}
+
+	private boolean handleItemHandler(IItemHandler itemHandler, IntList nonEmptySlots) {
+		boolean movedItems = false;
+		for(int i = 0; i < itemHandler.getSlots(); i++) {
+			//Loop though this inventory's slots and find a suitible one
+			for(int j : nonEmptySlots) {
+				ItemStack remainder = null;
+				if((itemHandler.getStackInSlot(i).isEmpty()) && !inventory.getStackInSlot(j).isEmpty()) {
+					remainder = itemHandler.insertItem(i, inventory.getStackInSlot(j), false);
+					inventory.setInventorySlotContents(j, remainder);
+				} else if(!getStackInSlot(j).isEmpty() &&
+						itemHandler.getStackInSlot(i).getItem() == getStackInSlot(j).getItem() &&
+						ItemStack.areItemStackTagsEqual(itemHandler.getStackInSlot(i), getStackInSlot(j)) &&
+						itemHandler.getSlotLimit(i) > itemHandler.getStackInSlot(i).getCount()) {
+
+					int toMove = Math.min(itemHandler.getSlotLimit(i) - itemHandler.getStackInSlot(i).getCount(), inventory.getStackInSlot(j).getCount());
+					remainder = inventory.decrStackSize(j, toMove);
+					remainder = itemHandler.insertItem(j, remainder, false);
+				}
+				if (remainder != null && remainder.isEmpty() && ! movedItems)
+					movedItems = true;
+			}
+		}
+		return movedItems;
+	}
+
+	private boolean handleInventory(IInventory otherInv, IntList nonEmptySlots) {
+		boolean movedItems = false;
+		for(int i = 0; i < otherInv.getSizeInventory(); i++) {
+
+			//Loop though this inventory's slots and find a suitible one
+			for(int j : nonEmptySlots) {
+				ItemStack remainder = null;
+				if((otherInv.getStackInSlot(i).isEmpty()) && !this.inventory.getStackInSlot(j).isEmpty()) {
+					otherInv.setInventorySlotContents(i, this.inventory.getStackInSlot(j));
+					this.inventory.setInventorySlotContents(j,ItemStack.EMPTY);
+					remainder = ItemStack.EMPTY;
+				} else if(!getStackInSlot(j).isEmpty() &&
+						otherInv.isItemValidForSlot(i, getStackInSlot(j)) &&
+						otherInv.getStackInSlot(i).getItem() == getStackInSlot(j).getItem() &&
+						ItemStack.areItemStackTagsEqual(otherInv.getStackInSlot(i), getStackInSlot(j)) &&
+						otherInv.getInventoryStackLimit() > otherInv.getStackInSlot(i).getCount()) {
+					int toMove = Math.min(otherInv.getInventoryStackLimit() - otherInv.getStackInSlot(i).getCount(), inventory.getStackInSlot(j).getCount());
+					remainder = this.inventory.decrStackSize(j, toMove);
+					otherInv.getStackInSlot(i).setCount(toMove);
+				}
+				if (remainder != null && remainder.isEmpty() && !movedItems)
+					movedItems = true;
+			}
+		}
+		return movedItems;
 	}
 
 	@Override
