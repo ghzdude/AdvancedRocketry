@@ -22,17 +22,17 @@ public abstract class WorldMixin {
         AtmosphereHandler.onBlockChange((World) (Object) this, pos);
     }
 
-    @Inject(method = "getCollisionBoxes(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;ZLjava/util/List;)Z",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos$PooledMutableBlockPos;release()V",
-                    shift = At.Shift.AFTER), cancellable = true)
-    private void returnEarly(Entity entityIn, AxisAlignedBB aabb, boolean p_191504_3_, List<AxisAlignedBB> outList, CallbackInfoReturnable<Boolean> cir) {
-        cir.setReturnValue(!outList.isEmpty());
-    }
+//    @Inject(method = "getCollisionBoxes(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;ZLjava/util/List;)Z",
+//            at = @At(value = "RETURN", ordinal = 2,
+//                    shift = At.Shift.BY, by = 7), cancellable = true)
+//    private void returnEarly(Entity entityIn, AxisAlignedBB aabb, boolean p_191504_3_, List<AxisAlignedBB> outList, CallbackInfoReturnable<Boolean> cir) {
+//        cir.setReturnValue(!outList.isEmpty());
+//    }
 
-    @Inject(method = "getRawLight",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/BlockPos$PooledMutableBlockPos;release()V",
-            shift = At.Shift.AFTER), cancellable = true)
-    private void test(BlockPos pos, EnumSkyBlock lightType, CallbackInfoReturnable<Integer> cir, @Local(print = true) int var10) {
-        cir.setReturnValue(var10);
-    }
+//    @Inject(method = "getRawLight",
+//            at = @At(value = "RETURN", ordinal = 4,
+//            shift = At.Shift.BY, by = 1))
+//    private void test(BlockPos pos, EnumSkyBlock lightType, CallbackInfoReturnable<Integer> cir) {
+////        cir.setReturnValue(var10);
+//    }
 }
