@@ -112,7 +112,6 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 		return false;
 	}
 
-	@SuppressWarnings("DataFlowIssue")
 	@Override
 	public void update() {
 		//Move a stack of items
@@ -131,40 +130,45 @@ public class TileRocketLoader extends TileInventoryHatch implements IInfrastruct
 				if (!inventory.getStackInSlot(i).isEmpty())
 					nonEmptySlots.add(i);
 			}
-			boolean hasMovedItems = false;
-			if (inventory.getSlots() - nonEmptySlots.size() != 0) {
+			//noinspection SizeReplaceableByIsEmpty
+			if (nonEmptySlots.size() != 0) {
+				boolean hasMovedItems = false;
 				for(TileEntity tile : tiles) {
+					if (tile instanceof TileGuidanceComputer || tile instanceof TileGuidanceComputerAccessHatch) continue;
 					IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
 					if (itemHandler != null) {
 						hasMovedItems = handleItemHandler(itemHandler, nonEmptySlots);
-					} else if (tile instanceof IInventory inv && !(tile instanceof TileGuidanceComputer)) {
+					} else if (tile instanceof IInventory inv) {
 						hasMovedItems = handleInventory(inv, nonEmptySlots);
 					}
 				}
+				setRedstoneState(hasMovedItems);
 			}
-			setRedstoneState(hasMovedItems);
 		}
 	}
 
 	private boolean handleItemHandler(IItemHandler itemHandler, IntList nonEmptySlots) {
 		boolean movedItems = false;
-		for(int i = 0; i < itemHandler.getSlots(); i++) {
-			//Loop though this inventory's slots and find a suitible one
-			for(int j : nonEmptySlots) {
+		//Loop though this inventory's slots and find a suitible one
+		for(int loaderSlotId : nonEmptySlots) {
+			ItemStack ourStack = inventory.getStackInSlot(loaderSlotId);
+			for(int otherSlotId = 0; otherSlotId < itemHandler.getSlots(); otherSlotId++) {
 				ItemStack remainder = null;
-				if((itemHandler.getStackInSlot(i).isEmpty()) && !inventory.getStackInSlot(j).isEmpty()) {
-					remainder = itemHandler.insertItem(i, inventory.getStackInSlot(j), false);
-					inventory.setInventorySlotContents(j, remainder);
-				} else if(!getStackInSlot(j).isEmpty() &&
-						itemHandler.getStackInSlot(i).getItem() == getStackInSlot(j).getItem() &&
-						ItemStack.areItemStackTagsEqual(itemHandler.getStackInSlot(i), getStackInSlot(j)) &&
-						itemHandler.getSlotLimit(i) > itemHandler.getStackInSlot(i).getCount()) {
+				ItemStack otherStack = itemHandler.getStackInSlot(otherSlotId);
 
-					int toMove = Math.min(itemHandler.getSlotLimit(i) - itemHandler.getStackInSlot(i).getCount(), inventory.getStackInSlot(j).getCount());
-					remainder = inventory.decrStackSize(j, toMove);
-					remainder = itemHandler.insertItem(j, remainder, false);
+				if(otherStack.isEmpty() && !ourStack.isEmpty()) {
+					remainder = itemHandler.insertItem(otherSlotId, ourStack, false);
+					inventory.setInventorySlotContents(loaderSlotId, remainder);
+				} else if(!otherStack.isEmpty() &&
+						otherStack.getItem() == ourStack.getItem() &&
+						ItemStack.areItemStackTagsEqual(otherStack, ourStack) &&
+						itemHandler.getSlotLimit(otherSlotId) > otherStack.getCount()) {
+
+					int toMove = Math.min(itemHandler.getSlotLimit(otherSlotId) - otherStack.getCount(), ourStack.getCount());
+					remainder = inventory.decrStackSize(loaderSlotId, toMove);
+					remainder = itemHandler.insertItem(otherSlotId, remainder, false);
 				}
-				if (remainder != null && remainder.isEmpty() && ! movedItems)
+				if (remainder != null && remainder.isEmpty() && !movedItems)
 					movedItems = true;
 			}
 		}

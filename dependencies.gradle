@@ -27,4 +27,7 @@ dependencies {
 //
     implementation rfg.deobf("curse.maven:libvulpes-236541:3801015")
 //    implementation rfg.deobf("curse.maven:galacticraft-legacy-564236:4671122")
+
+    runtimeOnly rfg.deobf("curse.maven:gregtech-ce-unofficial-557242:4951281-deobf-4951282-sources-4951283")
+    runtimeOnly rfg.deobf("curse.maven:codechicken-lib-1-8-242818:2779848")
 }
